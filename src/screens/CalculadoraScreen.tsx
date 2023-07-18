@@ -12,7 +12,50 @@ export const CalculadoraScreen = () => {
   };
 
   const armarNumero = (numeroTexto: string) => {
-    setNumero(numero + numeroTexto);
+    // No aceptar mas de un punto
+    if (numero.includes('.') && numeroTexto === '.') return;
+
+    if (numero.startsWith('0') || numero.startsWith('-0')) {
+      //punto decimal
+      if (numeroTexto === '.') {
+        setNumero(numero + numeroTexto);
+        //Evita si es otro cero y hay un punto
+      } else if (numeroTexto === '0' && numero.includes('.')) {
+        setNumero(numero + numeroTexto);
+        //Evita si es diferente de cero y no tiene punto
+      } else if (numeroTexto !== '0' && !numero.includes('.')) {
+        setNumero(numeroTexto);
+        //Evita numero 0000.0
+      } else if (numeroTexto === '0' && !numero.includes('.')) {
+        setNumero(numero);
+      } else {
+        setNumero(numero + numeroTexto);
+      }
+    } else {
+      setNumero(numero + numeroTexto);
+    }
+  };
+  const positivoNegativo = () => {
+    if (numero.includes('-')) {
+      setNumero(numero.replace('-', ''));
+    } else {
+      setNumero('-' + numero);
+    }
+  };
+
+  const borrarUltimo = () => {
+    let negativo = '';
+    let numeroTemp = numero;
+
+    if (numero.includes('-')) {
+      negativo = '-';
+      numeroTemp = numero.substring(1);
+    }
+    if (numeroTemp.length > 1) {
+      setNumero(negativo + numeroTemp.slice(0, -1));
+    } else {
+      setNumero('0');
+    }
   };
 
   return (
@@ -24,8 +67,8 @@ export const CalculadoraScreen = () => {
 
       <View style={styles.fila}>
         <BotonCalc texto="C" color="#9B9B9B" accion={limpiar} />
-        <BotonCalc texto="+/-" color="#9B9B9B" accion={limpiar} />
-        <BotonCalc texto="del" color="#9B9B9B" accion={limpiar} />
+        <BotonCalc texto="+/-" color="#9B9B9B" accion={positivoNegativo} />
+        <BotonCalc texto="del" color="#9B9B9B" accion={borrarUltimo} />
         <BotonCalc texto="/" color="#FF9427" accion={limpiar} />
       </View>
       {/* FILA DE BOTONES */}
